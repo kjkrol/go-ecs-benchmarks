@@ -9,13 +9,11 @@ import (
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
-	// GOKe blueprints always allocate memory. The only exceptions are tags, which are zero-sized structures.
-	// However, there is no option to craete and have an entity with only tags components.
-	blueprint := goke.NewBlueprint1[comps.Position](ecs, goke.Include[comps.Tag1]())
+	blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
 	entities := make([]goke.Entity, 0, n)
 
 	for range n {
-		e, _ := blueprint.Create()
+		e, _, _ := blueprint.Create()
 		// Just for fairness, because the others need to do that, too.
 		entities = append(entities, e)
 	}
@@ -27,7 +25,7 @@ func runGOKe(b *testing.B, n int) {
 
 	for b.Loop() {
 		for range n {
-			e, _ := blueprint.Create()
+			e, _, _ := blueprint.Create()
 			// Just for fairness, because the others need to do that, too.
 			entities = append(entities, e)
 		}
