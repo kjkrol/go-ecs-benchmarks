@@ -16,9 +16,7 @@ func runGOKe(b *testing.B, n int) {
 
 		b.StartTimer()
 		for range n {
-			_, p, v := blueprint.Create()
-			p.X, p.Y = 1, 1
-			v.X, v.Y = 1, 1
+			blueprint.Create()
 		}
 	}
 }
