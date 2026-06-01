@@ -78,6 +78,8 @@ type C5 struct {
 	Y float64
 }
 
+type Tag1 struct{}
+
 func (c C5) GetComponentId() volt.ComponentId {
 	return C5Id
 }

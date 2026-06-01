@@ -4,7 +4,7 @@ go 1.25.3
 
 require (
 	github.com/akmonengine/volt v1.7.0
-	github.com/kjkrol/goke v1.2.5
+	github.com/kjkrol/goke v1.2.6
 	github.com/marioolofo/go-gameengine-ecs v0.9.0
 	github.com/mlange-42/arche v0.15.3
 	github.com/mlange-42/ark v0.8.0

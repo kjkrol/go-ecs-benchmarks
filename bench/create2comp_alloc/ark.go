@@ -16,7 +16,10 @@ func runArk(b *testing.B, n int) {
 
 		b.StartTimer()
 		for range n {
-			mapper.NewEntityFn(nil)
+			mapper.NewEntityFn(func(p *comps.Position, v *comps.Velocity) {
+				p.X, p.Y = 1, 1
+				v.X, v.Y = 1, 1
+			})
 		}
 	}
 }
