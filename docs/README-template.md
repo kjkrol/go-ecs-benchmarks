@@ -63,7 +63,7 @@ The initial capacity of the world is set to 1024 where this is supported.
 
 ${query2comp}
 
-> **Note:** Donburi, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
+> **Note:** Donburi, GOKe, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
 As a result, iteration speed may degrade if the callback contains complex logic
 and the Go compiler is unable to inline it.
 
@@ -81,7 +81,7 @@ Each of these `N` entities has some combination of components
 
 ${query32arch}
 
-> **Note:** Donburi, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
+> **Note:** Donburi, GOKe, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
 As a result, iteration speed may degrade if the callback contains complex logic
 and the Go compiler is unable to inline it.
 
@@ -99,7 +99,7 @@ Another `4 * N` entities with `Position` and some combination of 8 components
 
 ${query256arch}
 
-> **Note:** Donburi, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
+> **Note:** Donburi, GOKe, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
 As a result, iteration speed may degrade if the callback contains complex logic
 and the Go compiler is unable to inline it.
 
@@ -210,7 +210,7 @@ ${new_world}
 Given that all tested projects are on Github, we can use the star history as a proxy here.
 
 <p align="center">
-<a title="Star History Chart" href="https://star-history.com/#mlange-42/ark&yohamta0/donburi-ecs&marioolofo/go-gameengine-ecs&unitoftime/ecs&akmonengine/volt&Date">
+<a title="Star History Chart" href="https://star-history.com/#mlange-42/ark&yohamta0/donburi-ecs&marioolofo/go-gameengine-ecs&kjkrol/goke&unitoftime/ecs&akmonengine/volt&Date">
 <img src="https://api.star-history.com/svg?repos=mlange-42/ark,yohamta0/donburi-ecs,marioolofo/go-gameengine-ecs,kjkrol/goke,unitoftime/ecs,akmonengine/volt&type=Date" alt="Star History Chart" width="600"/>
 </a>
 </p>
