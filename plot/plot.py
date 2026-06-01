@@ -21,6 +21,7 @@ colors = {
     "Ark (tables)": default_colors[1],
     "Donburi": default_colors[2],
     "ggecs": default_colors[4],
+    "GOKe": default_colors[3],
     "uot": default_colors[5],
     "Volt": default_colors[6],
 }
@@ -104,7 +105,7 @@ def plot_bars(data: pd.DataFrame, ax, legend: bool):
     ax.set_xticks(range(len(data.index)))
 
     labels = [
-        str(n) if n < 1000 else f"{n//1000}k" if n < 1000000 else f"{n//1000000}M"
+        str(n) if n < 1000 else f"{n // 1000}k" if n < 1000000 else f"{n // 1000000}M"
         for n in data.N
     ]
     ax.set_xticklabels(labels)
@@ -135,7 +136,7 @@ def plot_lines(data: pd.DataFrame, ax, legend: bool):
     ax.set_xticks(data.N)
 
     labels = [
-        str(n) if n < 1000 else f"{n//1000}k" if n < 1000000 else f"{n//1000000}M"
+        str(n) if n < 1000 else f"{n // 1000}k" if n < 1000000 else f"{n // 1000000}M"
         for n in data.N
     ]
     ax.set_xticklabels(labels)
@@ -171,8 +172,8 @@ def to_time(v: float) -> str:
     if v < 1_000:
         return f"{v:.2f}ns"
     if v < 1_000_000:
-        return f"{(v/1_000):.2f}us"
-    return f"{(v/1_000_000):.2f}ms"
+        return f"{(v / 1_000):.2f}us"
+    return f"{(v / 1_000_000):.2f}ms"
 
 
 def update_readme(template_file: str, values: dict) -> str:
