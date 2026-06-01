@@ -11,6 +11,7 @@ func Benchmarks() util.Benchmarks {
 			{Name: "Arche", F: runArche},
 			{Name: "Ark", F: runArk},
 			{Name: "Donburi", F: runDonburi},
+			{Name: "GOKe", F: runGOKe},
 			{Name: "ggecs", F: runGGEcs},
 			{Name: "uot", F: runUot},
 			{Name: "Volt", F: runVolt},
