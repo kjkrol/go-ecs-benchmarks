@@ -32,7 +32,7 @@ Open an issue if you want a version update.
 | [Ark](https://github.com/mlange-42/ark) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [Donburi](https://github.com/yohamta0/donburi-ecs) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | [go‑gameengine‑ecs](https://github.com/marioolofo/go-gameengine-ecs) | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [GOKe](https://github.com/kjkrol/goke) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [GOKe](https://github.com/kjkrol/goke) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | [unitoftime/ecs](https://github.com/unitoftime/ecs) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | [Volt](https://github.com/akmonengine/volt) | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
@@ -211,7 +211,7 @@ Given that all tested projects are on Github, we can use the star history as a p
 
 <p align="center">
 <a title="Star History Chart" href="https://star-history.com/#mlange-42/ark&yohamta0/donburi-ecs&marioolofo/go-gameengine-ecs&unitoftime/ecs&akmonengine/volt&Date">
-<img src="https://api.star-history.com/svg?repos=mlange-42/ark,yohamta0/donburi-ecs,marioolofo/go-gameengine-ecs,unitoftime/ecs,akmonengine/volt&type=Date" alt="Star History Chart" width="600"/>
+<img src="https://api.star-history.com/svg?repos=mlange-42/ark,yohamta0/donburi-ecs,marioolofo/go-gameengine-ecs,kjkrol/goke,unitoftime/ecs,akmonengine/volt&type=Date" alt="Star History Chart" width="600"/>
 </a>
 </p>
 
