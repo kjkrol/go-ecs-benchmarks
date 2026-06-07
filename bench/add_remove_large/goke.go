@@ -20,11 +20,14 @@ func runGOKe(b *testing.B, n int) {
 		comps.C6, comps.C7, comps.C8, comps.C9,
 	](ecs)
 
-	entities := make([]goke.Entity, 0, n)
-	for range n {
-		entity, _, _, _, _, _, _, _, _, _, _ := blueprint.Create()
+	var entities []goke.Entity
+	for page := range blueprint.Create(n) {
+		for _, e := range page.Entity {
+			entities = append(entities, e)
+		}
+	}
+	for _, entity := range entities {
 		goke.EnsureComponent[comps.C10](ecs, entity, c10Desc)
-		entities = append(entities, entity)
 	}
 
 	for _, e := range entities {

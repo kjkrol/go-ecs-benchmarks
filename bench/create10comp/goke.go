@@ -15,12 +15,11 @@ func runGOKe(b *testing.B, n int) {
 		comps.C6, comps.C7, comps.C8, comps.C9, comps.C10,
 	](ecs)
 
-	entities := make([]goke.Entity, 0, n)
-
-	for range n {
-		e, _, _, _, _, _, _, _, _, _, _ := blueprint.Create()
-		// Just for fairness, because the others need to do that, too.
-		entities = append(entities, e)
+	var entities []goke.Entity
+	for page := range blueprint.Create(n) {
+		for _, e := range page.Entity {
+			entities = append(entities, e)
+		}
 	}
 
 	for _, e := range entities {
@@ -29,10 +28,10 @@ func runGOKe(b *testing.B, n int) {
 	entities = entities[:0]
 
 	for b.Loop() {
-		for range n {
-			e, _, _, _, _, _, _, _, _, _, _ := blueprint.Create()
-			// Just for fairness, because the others need to do that, too.
-			entities = append(entities, e)
+		for page := range blueprint.Create(n) {
+			for _, e := range page.Entity {
+				entities = append(entities, e)
+			}
 		}
 		b.StopTimer()
 

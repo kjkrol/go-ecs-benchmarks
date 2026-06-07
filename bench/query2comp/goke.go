@@ -18,21 +18,24 @@ func runGOKe(b *testing.B, n int) {
 	posBP := goke.NewBlueprint1[comps.Position](ecs)
 	posVelBP := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
 
-	for range n * 10 {
-		_, _ = posBP.Create()
+	for _ = range posBP.Create(n * 10) {
 	}
-	for range n {
-		_, _, v := posVelBP.Create()
-		v.X, v.Y = 1, 1
+
+	for page := range posVelBP.Create(n) {
+		for i, _ := range page.Entity {
+			page.Comp2[i].X = 1
+			page.Comp2[i].Y = 1
+		}
 	}
 
 	view := goke.NewView2[comps.Position, comps.Velocity](ecs)
 
 	loop := func() {
-		for head := range view.Values() {
-			pos, vel := head.V1, head.V2
-			pos.X += vel.X
-			pos.Y += vel.Y
+		for page := range view.All() {
+			for i, _ := range page.Entity {
+				page.Comp1[i].X += page.Comp2[i].X
+				page.Comp1[i].Y += page.Comp2[i].Y
+			}
 		}
 	}
 	for b.Loop() {
@@ -40,9 +43,10 @@ func runGOKe(b *testing.B, n int) {
 	}
 
 	sum := 0.0
-	for head := range view.Values() {
-		pos, _ := head.V1, head.V2
-		sum += pos.X + pos.Y
+	for page := range view.All() {
+		for i, _ := range page.Entity {
+			sum += page.Comp1[i].X + page.Comp1[i].Y
+		}
 	}
 	if sum != float64(n*b.N*2) {
 		panic(fmt.Sprintf("Expected sum %d, got %.2f", n*b.N*2, sum))

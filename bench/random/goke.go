@@ -18,10 +18,11 @@ func runGOKe(b *testing.B, n int) {
 	blueprint := goke.NewBlueprint1[comps.Position](ecs)
 	view := goke.NewView1[comps.Position](ecs)
 
-	entities := make([]goke.Entity, 0, n)
-	for range n {
-		e, _ := blueprint.Create()
-		entities = append(entities, e)
+	var entities []goke.Entity
+	for page := range blueprint.Create(n) {
+		for _, e := range page.Entity {
+			entities = append(entities, e)
+		}
 	}
 	rand.Shuffle(n, util.Swap(entities))
 
@@ -30,8 +31,8 @@ func runGOKe(b *testing.B, n int) {
 	// the cost of calling the non-inlined callback.
 	b.ResetTimer()
 	for range b.N {
-		for head := range view.Filter(entities) {
-			pos := head.V1
+		for _, item := range view.Filter(entities) {
+			pos := item.Comp1
 			sum += pos.X
 		}
 	}

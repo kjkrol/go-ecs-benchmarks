@@ -15,10 +15,11 @@ func runGOKe(b *testing.B, n int) {
 
 	posBP := goke.NewBlueprint1[comps.Position](ecs)
 
-	entities := make([]goke.Entity, 0, n)
-	for range n {
-		entity, _ := posBP.Create()
-		entities = append(entities, entity)
+	var entities []goke.Entity
+	for page := range posBP.Create(n) {
+		for _, e := range page.Entity {
+			entities = append(entities, e)
+		}
 	}
 
 	for _, e := range entities {

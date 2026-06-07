@@ -22,46 +22,51 @@ func runGOKe(b *testing.B, n int) {
 	c7ID := goke.RegisterComponent[comps.C7](ecs)
 	c8ID := goke.RegisterComponent[comps.C8](ecs)
 
-	extraIDs := []goke.ComponentDesc{c1ID, c2ID, c3ID, c4ID, c5ID, c6ID, c7ID, c8ID}
+	realBlueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
+	for page := range realBlueprint.Create(n) {
+		_ = page
+	}
 
-	blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
-
-	for i := range n * 4 {
-		e, _, _ := blueprint.Create()
-		for j, id := range extraIDs {
-			m := 1 << j
-			if i&m == m {
-				switch id {
-				case c1ID:
-					goke.EnsureComponent[comps.C1](ecs, e, id)
-				case c2ID:
-					goke.EnsureComponent[comps.C2](ecs, e, id)
-				case c3ID:
-					goke.EnsureComponent[comps.C3](ecs, e, id)
-				case c4ID:
-					goke.EnsureComponent[comps.C4](ecs, e, id)
-				case c5ID:
-					goke.EnsureComponent[comps.C5](ecs, e, id)
-				case c6ID:
-					goke.EnsureComponent[comps.C6](ecs, e, id)
-				case c7ID:
-					goke.EnsureComponent[comps.C7](ecs, e, id)
-				case c8ID:
-					goke.EnsureComponent[comps.C8](ecs, e, id)
-				default:
-					panic("Unknown component type: " + id.Type.String())
-				}
+	noiseBlueprint := goke.NewBlueprint1[comps.Position](ecs)
+	i := 0
+	for page := range noiseBlueprint.Create(n * 4) {
+		for _, e := range page.Entity {
+			if i&(1<<0) != 0 {
+				goke.EnsureComponent[comps.C1](ecs, e, c1ID)
 			}
+			if i&(1<<1) != 0 {
+				goke.EnsureComponent[comps.C2](ecs, e, c2ID)
+			}
+			if i&(1<<2) != 0 {
+				goke.EnsureComponent[comps.C3](ecs, e, c3ID)
+			}
+			if i&(1<<3) != 0 {
+				goke.EnsureComponent[comps.C4](ecs, e, c4ID)
+			}
+			if i&(1<<4) != 0 {
+				goke.EnsureComponent[comps.C5](ecs, e, c5ID)
+			}
+			if i&(1<<5) != 0 {
+				goke.EnsureComponent[comps.C6](ecs, e, c6ID)
+			}
+			if i&(1<<6) != 0 {
+				goke.EnsureComponent[comps.C7](ecs, e, c7ID)
+			}
+			if i&(1<<7) != 0 {
+				goke.EnsureComponent[comps.C8](ecs, e, c8ID)
+			}
+			i++
 		}
 	}
 
 	view := goke.NewView2[comps.Position, comps.Velocity](ecs)
 
 	loop := func() {
-		for head := range view.Values() {
-			pos, vel := head.V1, head.V2
-			pos.X += vel.X
-			pos.Y += vel.Y
+		for page := range view.All() {
+			for i := range page.Entity {
+				page.Comp1[i].X += page.Comp2[i].X
+				page.Comp1[i].Y += page.Comp2[i].Y
+			}
 		}
 	}
 	for b.Loop() {
@@ -69,9 +74,10 @@ func runGOKe(b *testing.B, n int) {
 	}
 
 	sum := 0.0
-	for head := range view.Values() {
-		pos := head.V1
-		sum += pos.X + pos.Y
+	for page := range view.All() {
+		for i := range page.Entity {
+			sum += page.Comp1[i].X + page.Comp1[i].Y
+		}
 	}
 	runtime.KeepAlive(sum)
 }

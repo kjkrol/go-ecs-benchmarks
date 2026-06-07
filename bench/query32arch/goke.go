@@ -20,39 +20,42 @@ func runGOKe(b *testing.B, n int) {
 	c5ID := goke.RegisterComponent[comps.C5](ecs)
 
 	extraIDs := []goke.ComponentDesc{c1ID, c2ID, c3ID, c4ID, c5ID}
-
 	blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
 
-	for i := range n {
-		e, _, _ := blueprint.Create()
-		for j, id := range extraIDs {
-			m := 1 << j
-			if i&m == m {
-				switch id {
-				case c1ID:
-					goke.EnsureComponent[comps.C1](ecs, e, id)
-				case c2ID:
-					goke.EnsureComponent[comps.C2](ecs, e, id)
-				case c3ID:
-					goke.EnsureComponent[comps.C3](ecs, e, id)
-				case c4ID:
-					goke.EnsureComponent[comps.C4](ecs, e, id)
-				case c5ID:
-					goke.EnsureComponent[comps.C5](ecs, e, id)
-				default:
-					panic("Unknown component type: " + id.Type.String())
+	i := 0
+	for page := range blueprint.Create(n) {
+		for _, e := range page.Entity {
+			for j, id := range extraIDs {
+				m := 1 << j
+				if i&m == m {
+					switch id {
+					case c1ID:
+						goke.EnsureComponent[comps.C1](ecs, e, id)
+					case c2ID:
+						goke.EnsureComponent[comps.C2](ecs, e, id)
+					case c3ID:
+						goke.EnsureComponent[comps.C3](ecs, e, id)
+					case c4ID:
+						goke.EnsureComponent[comps.C4](ecs, e, id)
+					case c5ID:
+						goke.EnsureComponent[comps.C5](ecs, e, id)
+					default:
+						panic("Unknown component type: " + id.Type.String())
+					}
 				}
 			}
+			i++
 		}
 	}
 
 	view := goke.NewView2[comps.Position, comps.Velocity](ecs)
 
 	loop := func() {
-		for head := range view.Values() {
-			pos, vel := head.V1, head.V2
-			pos.X += vel.X
-			pos.Y += vel.Y
+		for page := range view.All() {
+			for i, _ := range page.Entity {
+				page.Comp1[i].X += page.Comp2[i].X
+				page.Comp1[i].Y += page.Comp2[i].Y
+			}
 		}
 	}
 	for b.Loop() {
@@ -60,9 +63,10 @@ func runGOKe(b *testing.B, n int) {
 	}
 
 	sum := 0.0
-	for head := range view.Values() {
-		pos := head.V1
-		sum += pos.X + pos.Y
+	for head := range view.All() {
+		for i, _ := range head.Entity {
+			sum += head.Comp1[i].X + head.Comp1[i].Y
+		}
 	}
 	runtime.KeepAlive(sum)
 }

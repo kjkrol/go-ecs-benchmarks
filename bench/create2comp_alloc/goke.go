@@ -15,8 +15,7 @@ func runGOKe(b *testing.B, n int) {
 		blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
 
 		b.StartTimer()
-		for range n {
-			blueprint.Create()
+		for _ = range blueprint.Create(n) {
 		}
 	}
 }

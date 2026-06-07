@@ -32,7 +32,7 @@ Open an issue if you want a version update.
 | [Ark](https://github.com/mlange-42/ark) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [Donburi](https://github.com/yohamta0/donburi-ecs) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | [go‑gameengine‑ecs](https://github.com/marioolofo/go-gameengine-ecs) | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [GOKe](https://github.com/kjkrol/goke) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| [GOKe](https://github.com/kjkrol/goke) | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | [unitoftime/ecs](https://github.com/unitoftime/ecs) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | [Volt](https://github.com/akmonengine/volt) | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
