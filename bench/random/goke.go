@@ -18,11 +18,9 @@ func runGOKe(b *testing.B, n int) {
 	blueprint := goke.NewBlueprint1[comps.Position](ecs)
 	view := goke.NewView1[comps.Position](ecs)
 
-	var entities []goke.Entity
+	entities := make([]goke.Entity, 0, n)
 	for page := range blueprint.Create(n) {
-		for _, e := range page.Entity {
-			entities = append(entities, e)
-		}
+		entities = append(entities, page.Entity...)
 	}
 	rand.Shuffle(n, util.Swap(entities))
 

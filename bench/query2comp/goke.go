@@ -23,8 +23,8 @@ func runGOKe(b *testing.B, n int) {
 
 	for page := range posVelBP.Create(n) {
 		for i, _ := range page.Entity {
-			page.Comp2[i].X = 1
-			page.Comp2[i].Y = 1
+			v := &page.Comp2[i]
+			v.X, v.Y = 1, 1
 		}
 	}
 
@@ -33,8 +33,9 @@ func runGOKe(b *testing.B, n int) {
 	loop := func() {
 		for page := range view.All() {
 			for i, _ := range page.Entity {
-				page.Comp1[i].X += page.Comp2[i].X
-				page.Comp1[i].Y += page.Comp2[i].Y
+				pos, vel := &page.Comp1[i], &page.Comp2[i]
+				pos.X += vel.X
+				pos.Y += vel.Y
 			}
 		}
 	}
@@ -45,7 +46,9 @@ func runGOKe(b *testing.B, n int) {
 	sum := 0.0
 	for page := range view.All() {
 		for i, _ := range page.Entity {
-			sum += page.Comp1[i].X + page.Comp1[i].Y
+			pos, vel := &page.Comp1[i], &page.Comp2[i]
+			pos.X += vel.X
+			pos.Y += vel.Y
 		}
 	}
 	if sum != float64(n*b.N*2) {

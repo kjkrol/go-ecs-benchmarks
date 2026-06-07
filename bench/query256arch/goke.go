@@ -64,8 +64,9 @@ func runGOKe(b *testing.B, n int) {
 	loop := func() {
 		for page := range view.All() {
 			for i := range page.Entity {
-				page.Comp1[i].X += page.Comp2[i].X
-				page.Comp1[i].Y += page.Comp2[i].Y
+				pos, vel := &page.Comp1[i], &page.Comp2[i]
+				pos.X += vel.X
+				pos.Y += vel.Y
 			}
 		}
 	}
@@ -76,7 +77,8 @@ func runGOKe(b *testing.B, n int) {
 	sum := 0.0
 	for page := range view.All() {
 		for i := range page.Entity {
-			sum += page.Comp1[i].X + page.Comp1[i].Y
+			pos := &page.Comp1[i]
+			sum += pos.X + pos.Y
 		}
 	}
 	runtime.KeepAlive(sum)

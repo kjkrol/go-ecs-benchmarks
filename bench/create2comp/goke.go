@@ -11,7 +11,7 @@ func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 	blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
 
-	var entities []goke.Entity
+	entities := make([]goke.Entity, 0, n)
 	for page := range blueprint.Create(n) {
 		for _, e := range page.Entity {
 			entities = append(entities, e)
