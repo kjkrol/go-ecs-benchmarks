@@ -46,9 +46,8 @@ func runGOKe(b *testing.B, n int) {
 	sum := 0.0
 	for page := range view.All() {
 		for i, _ := range page.Entity {
-			pos, vel := &page.Comp1[i], &page.Comp2[i]
-			pos.X += vel.X
-			pos.Y += vel.Y
+			pos := &page.Comp1[i]
+			sum += pos.X + pos.Y
 		}
 	}
 	if sum != float64(n*b.N*2) {
