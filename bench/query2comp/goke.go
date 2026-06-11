@@ -5,37 +5,44 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v2"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
-	goke.RegisterComponent[comps.Position](ecs)
-	goke.RegisterComponent[comps.Velocity](ecs)
+	var pos goke.Comp[comps.Position]
+	posBP := ecs.NewFactory(&pos)
 
-	posBP := goke.NewBlueprint1[comps.Position](ecs)
-	posVelBP := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
+	var posVelPos goke.Comp[comps.Position]
+	var posVelVel goke.Comp[comps.Velocity]
+	posVelBP := ecs.NewFactory(&posVelPos, &posVelVel)
 
-	for _ = range posBP.Create(n * 10) {
+	posBP.Create(n * 10)
+	for posBP.Next() {
 	}
 
-	for page := range posVelBP.Create(n) {
-		for i, _ := range page.Entity {
-			v := &page.Comp2[i]
-			v.X, v.Y = 1, 1
+	posVelBP.Create(n)
+	for posVelBP.Next() {
+		velSlice := posVelVel.Slice(&posVelBP.Cursor)
+		for i := range velSlice {
+			velSlice[i].X, velSlice[i].Y = 1, 1
 		}
 	}
 
-	view := goke.NewView2[comps.Position, comps.Velocity](ecs)
+	var qpos goke.Comp[comps.Position]
+	var qvel goke.Comp[comps.Velocity]
+	query := ecs.NewQueryBuilder(&qpos, &qvel).Build()
 
 	loop := func() {
-		for page := range view.All() {
-			for i, _ := range page.Entity {
-				pos, vel := &page.Comp1[i], &page.Comp2[i]
-				pos.X += vel.X
-				pos.Y += vel.Y
+		query.All()
+		for query.Next() {
+			posSlice := qpos.Slice(&query.Cursor)
+			velSlice := qvel.Slice(&query.Cursor)
+			for i := range posSlice {
+				posSlice[i].X += velSlice[i].X
+				posSlice[i].Y += velSlice[i].Y
 			}
 		}
 	}
@@ -44,10 +51,11 @@ func runGOKe(b *testing.B, n int) {
 	}
 
 	sum := 0.0
-	for page := range view.All() {
-		for i, _ := range page.Entity {
-			pos := &page.Comp1[i]
-			sum += pos.X + pos.Y
+	query.All()
+	for query.Next() {
+		posSlice := qpos.Slice(&query.Cursor)
+		for i := range posSlice {
+			sum += posSlice[i].X + posSlice[i].Y
 		}
 	}
 	if sum != float64(n*b.N*2) {

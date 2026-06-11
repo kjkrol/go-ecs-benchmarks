@@ -3,40 +3,46 @@ package create10comp
 import (
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/uid"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
-	blueprint := goke.NewBlueprint10[
-		comps.C1, comps.C2, comps.C3, comps.C4, comps.C5,
-		comps.C6, comps.C7, comps.C8, comps.C9, comps.C10,
-	](ecs)
+	var c1 goke.Comp[comps.C1]
+	var c2 goke.Comp[comps.C2]
+	var c3 goke.Comp[comps.C3]
+	var c4 goke.Comp[comps.C4]
+	var c5 goke.Comp[comps.C5]
+	var c6 goke.Comp[comps.C6]
+	var c7 goke.Comp[comps.C7]
+	var c8 goke.Comp[comps.C8]
+	var c9 goke.Comp[comps.C9]
+	var c10 goke.Comp[comps.C10]
+	factory := ecs.NewFactory(&c1, &c2, &c3, &c4, &c5, &c6, &c7, &c8, &c9, &c10)
 
-	entities := make([]goke.Entity, 0, n)
-	for page := range blueprint.Create(n) {
-		for _, e := range page.Entity {
-			entities = append(entities, e)
-		}
+	entities := make([]uid.UID64, 0, n)
+	factory.Create(n)
+	for factory.Next() {
+		entities = append(entities, factory.IDs...)
 	}
 
 	for _, e := range entities {
-		goke.RemoveEntity(ecs, e)
+		ecs.RemoveEnt(e)
 	}
 	entities = entities[:0]
 
-	for b.Loop() {
-		for page := range blueprint.Create(n) {
-			for _, e := range page.Entity {
-				entities = append(entities, e)
-			}
+	for range b.N {
+		factory.Create(n)
+		for factory.Next() {
+			entities = append(entities, factory.IDs...)
 		}
 		b.StopTimer()
 
 		for _, e := range entities {
-			goke.RemoveEntity(ecs, e)
+			ecs.RemoveEnt(e)
 		}
 		entities = entities[:0]
 		b.StartTimer()

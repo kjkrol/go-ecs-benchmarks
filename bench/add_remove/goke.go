@@ -3,38 +3,40 @@ package addremove
 import (
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/uid"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
-	goke.RegisterComponent[comps.Position](ecs)
-	velDesc := goke.RegisterComponent[comps.Velocity](ecs)
+	var pos goke.Comp[comps.Position]
+	posBP := ecs.NewFactory(&pos)
 
-	posBP := goke.NewBlueprint1[comps.Position](ecs)
-
-	var entities []goke.Entity
-	for page := range posBP.Create(n) {
-		for _, e := range page.Entity {
-			entities = append(entities, e)
-		}
+	var entities []uid.UID64
+	posBP.Create(n)
+	for posBP.Next() {
+		entities = append(entities, posBP.IDs...)
 	}
 
+	var vel goke.Comp[comps.Velocity]
+	addVel := ecs.NewEditorBuilder(&vel).Build()
+	delVel := ecs.NewEditorBuilder().Delete(goke.Del[comps.Velocity]()).Build()
+
 	for _, e := range entities {
-		goke.EnsureComponent[comps.Velocity](ecs, e, velDesc)
+		addVel.Update(e)
 	}
 	for _, e := range entities {
-		goke.RemoveComponent(ecs, e, velDesc)
+		delVel.Update(e)
 	}
 
 	for b.Loop() {
 		for _, e := range entities {
-			goke.EnsureComponent[comps.Velocity](ecs, e, velDesc)
+			addVel.Update(e)
 		}
 		for _, e := range entities {
-			goke.RemoveComponent(ecs, e, velDesc)
+			delVel.Update(e)
 		}
 	}
 }

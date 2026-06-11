@@ -5,7 +5,8 @@ import (
 	"math/rand/v2"
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/uid"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/util"
 )
@@ -13,24 +14,27 @@ import (
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
-	goke.RegisterComponent[comps.Position](ecs)
+	var pos goke.Comp[comps.Position]
+	factory := ecs.NewFactory(&pos)
 
-	blueprint := goke.NewBlueprint1[comps.Position](ecs)
-	view := goke.NewView1[comps.Position](ecs)
-
-	entities := make([]goke.Entity, 0, n)
-	for page := range blueprint.Create(n) {
-		entities = append(entities, page.Entity...)
+	entities := make([]uid.UID64, 0, n)
+	factory.Create(n)
+	for factory.Next() {
+		entities = append(entities, factory.IDs...)
 	}
 	rand.Shuffle(n, util.Swap(entities))
+
+	var qpos goke.Comp[comps.Position]
+	query := ecs.NewQueryBuilder(&qpos).Build()
 
 	sum := 0.0
 	// Don't use b.Loop and callback, as we do not want to measure
 	// the cost of calling the non-inlined callback.
 	b.ResetTimer()
 	for range b.N {
-		for _, item := range view.Filter(entities) {
-			pos := item.Comp1
+		query.Pick(entities)
+		for query.Next() {
+			pos := qpos.At(&query.Cursor)
 			sum += pos.X
 		}
 	}

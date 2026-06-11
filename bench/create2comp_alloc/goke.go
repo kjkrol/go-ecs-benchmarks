@@ -3,19 +3,23 @@ package create2compalloc
 import (
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v2"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
-	for b.Loop() {
+
+	for range b.N {
 		b.StopTimer()
 		ecs := goke.New()
 
-		blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
+		var pos goke.Comp[comps.Position]
+		var vel goke.Comp[comps.Velocity]
+		factory := ecs.NewFactory(&pos, &vel)
 
 		b.StartTimer()
-		for _ = range blueprint.Create(n) {
+		factory.Create(n)
+		for factory.Next() {
 		}
 	}
 }

@@ -3,36 +3,38 @@ package create2comp
 import (
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/uid"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
-	blueprint := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
 
-	entities := make([]goke.Entity, 0, n)
-	for page := range blueprint.Create(n) {
-		for _, e := range page.Entity {
-			entities = append(entities, e)
-		}
+	var pos goke.Comp[comps.Position]
+	var vel goke.Comp[comps.Velocity]
+	factory := ecs.NewFactory(&pos, &vel)
+
+	entities := make([]uid.UID64, 0, n)
+	factory.Create(n)
+	for factory.Next() {
+		entities = append(entities, factory.IDs...)
 	}
 
 	for _, e := range entities {
-		goke.RemoveEntity(ecs, e)
+		ecs.RemoveEnt(e)
 	}
 	entities = entities[:0]
 
-	for b.Loop() {
-		for page := range blueprint.Create(n) {
-			for _, e := range page.Entity {
-				entities = append(entities, e)
-			}
+	for range b.N {
+		factory.Create(n)
+		for factory.Next() {
+			entities = append(entities, factory.IDs...)
 		}
 		b.StopTimer()
 
 		for _, e := range entities {
-			goke.RemoveEntity(ecs, e)
+			ecs.RemoveEnt(e)
 		}
 		entities = entities[:0]
 		b.StartTimer()
