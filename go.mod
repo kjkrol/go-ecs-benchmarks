@@ -1,10 +1,10 @@
 module github.com/mlange-42/go-ecs-benchmarks
 
-go 1.26.3
+go 1.26.4
 
 require (
 	github.com/akmonengine/volt v1.7.0
-	github.com/kjkrol/goke v1.3.3
+	github.com/kjkrol/goke v1.3.4
 	github.com/marioolofo/go-gameengine-ecs v0.9.0
 	github.com/mlange-42/arche v0.15.3
 	github.com/mlange-42/ark v0.8.3
@@ -18,6 +18,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/kjkrol/uid v0.1.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
