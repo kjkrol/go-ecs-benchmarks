@@ -24,7 +24,7 @@ func runGOKe(b *testing.B, n int) {
 	factory2.Create(n)
 	cursor := &factory2.Cursor
 	for factory2.Next() {
-		velSlice := pos.Slice(cursor)
+		velSlice := vel.Slice(cursor)
 		for i := range cursor.IDs {
 			velSlice[i].X, velSlice[i].Y = 1, 1
 		}
