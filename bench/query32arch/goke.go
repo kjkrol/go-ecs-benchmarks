@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/uid"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
@@ -13,7 +14,14 @@ func runGOKe(b *testing.B, n int) {
 
 	var pos goke.Comp[comps.Position]
 	var vel goke.Comp[comps.Velocity]
+
+	entities := make([]uid.UID64, 0, n)
+
 	factory := ecs.NewFactory(&pos, &vel)
+	factory.Create(n)
+	for factory.Next() {
+		entities = append(entities, factory.IDs...)
+	}
 
 	var c1 goke.Comp[comps.C1]
 	var c2 goke.Comp[comps.C2]
@@ -28,30 +36,26 @@ func runGOKe(b *testing.B, n int) {
 		ecs.NewEditorBuilder(&c5).Build(),
 	}
 
-	i := 0
-	factory.Create(n)
-	for factory.Next() {
-		for _, e := range factory.IDs {
-			for j, ed := range adders {
-				m := 1 << j
-				if i&m == m {
-					ed.Update(e)
-				}
+	// Distribute entities across up to 32 archetypes only after the factory
+	// loop is fully drained — interleaving structural edits with an active
+	// Factory iteration over the same table is unsafe.
+	for i, e := range entities {
+		for j, ed := range adders {
+			m := 1 << j
+			if i&m == m {
+				ed.Update(e)
 			}
-			i++
 		}
 	}
 
-	var qpos goke.Comp[comps.Position]
-	var qvel goke.Comp[comps.Velocity]
-	query := ecs.NewQueryBuilder(&qpos, &qvel).Build()
-
+	query := ecs.NewQueryBuilder(&pos, &vel).Build()
+	cursor := &query.Cursor
 	loop := func() {
 		query.All()
 		for query.Next() {
-			posSlice := qpos.Slice(&query.Cursor)
-			velSlice := qvel.Slice(&query.Cursor)
-			for i := range posSlice {
+			posSlice := pos.Slice(cursor)
+			velSlice := vel.Slice(cursor)
+			for i := range cursor.IDs {
 				posSlice[i].X += velSlice[i].X
 				posSlice[i].Y += velSlice[i].Y
 			}
@@ -64,8 +68,8 @@ func runGOKe(b *testing.B, n int) {
 	sum := 0.0
 	query.All()
 	for query.Next() {
-		posSlice := qpos.Slice(&query.Cursor)
-		for i := range posSlice {
+		posSlice := pos.Slice(cursor)
+		for i := range cursor.IDs {
 			sum += posSlice[i].X + posSlice[i].Y
 		}
 	}

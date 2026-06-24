@@ -5,21 +5,26 @@ import (
 	"testing"
 
 	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/uid"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
-	var realPos goke.Comp[comps.Position]
-	var realVel goke.Comp[comps.Velocity]
-	realFactory := ecs.NewFactory(&realPos, &realVel)
-	realFactory.Create(n)
-	for realFactory.Next() {
+	var pos goke.Comp[comps.Position]
+	var vel goke.Comp[comps.Velocity]
+	factory := ecs.NewFactory(&pos, &vel)
+	factory.Create(n)
+	for factory.Next() {
 	}
 
-	var noisePos goke.Comp[comps.Position]
-	noiseFactory := ecs.NewFactory(&noisePos)
+	noiseEntities := make([]uid.UID64, 0, n*4)
+	noiseFactory := ecs.NewFactory(&pos)
+	noiseFactory.Create(n * 4)
+	for noiseFactory.Next() {
+		noiseEntities = append(noiseEntities, noiseFactory.IDs...)
+	}
 
 	var c1 goke.Comp[comps.C1]
 	var c2 goke.Comp[comps.C2]
@@ -38,48 +43,44 @@ func runGOKe(b *testing.B, n int) {
 	addC7 := ecs.NewEditorBuilder(&c7).Build()
 	addC8 := ecs.NewEditorBuilder(&c8).Build()
 
-	i := 0
-	noiseFactory.Create(n * 4)
-	for noiseFactory.Next() {
-		for _, e := range noiseFactory.IDs {
-			if i&(1<<0) != 0 {
-				addC1.Update(e)
-			}
-			if i&(1<<1) != 0 {
-				addC2.Update(e)
-			}
-			if i&(1<<2) != 0 {
-				addC3.Update(e)
-			}
-			if i&(1<<3) != 0 {
-				addC4.Update(e)
-			}
-			if i&(1<<4) != 0 {
-				addC5.Update(e)
-			}
-			if i&(1<<5) != 0 {
-				addC6.Update(e)
-			}
-			if i&(1<<6) != 0 {
-				addC7.Update(e)
-			}
-			if i&(1<<7) != 0 {
-				addC8.Update(e)
-			}
-			i++
+	// Fragment the noise entities across up to 256 archetypes only after the
+	// factory loop is fully drained — interleaving structural edits with an
+	// active Factory iteration over the same table is unsafe.
+	for i, e := range noiseEntities {
+		if i&(1<<0) != 0 {
+			addC1.Update(e)
+		}
+		if i&(1<<1) != 0 {
+			addC2.Update(e)
+		}
+		if i&(1<<2) != 0 {
+			addC3.Update(e)
+		}
+		if i&(1<<3) != 0 {
+			addC4.Update(e)
+		}
+		if i&(1<<4) != 0 {
+			addC5.Update(e)
+		}
+		if i&(1<<5) != 0 {
+			addC6.Update(e)
+		}
+		if i&(1<<6) != 0 {
+			addC7.Update(e)
+		}
+		if i&(1<<7) != 0 {
+			addC8.Update(e)
 		}
 	}
 
-	var qpos goke.Comp[comps.Position]
-	var qvel goke.Comp[comps.Velocity]
-	query := ecs.NewQueryBuilder(&qpos, &qvel).Build()
-
+	query := ecs.NewQueryBuilder(&pos, &vel).Build()
+	cursor := &query.Cursor
 	loop := func() {
 		query.All()
 		for query.Next() {
-			posSlice := qpos.Slice(&query.Cursor)
-			velSlice := qvel.Slice(&query.Cursor)
-			for i := range posSlice {
+			posSlice := pos.Slice(cursor)
+			velSlice := vel.Slice(cursor)
+			for i := range cursor.IDs {
 				posSlice[i].X += velSlice[i].X
 				posSlice[i].Y += velSlice[i].Y
 			}
@@ -92,8 +93,8 @@ func runGOKe(b *testing.B, n int) {
 	sum := 0.0
 	query.All()
 	for query.Next() {
-		posSlice := qpos.Slice(&query.Cursor)
-		for i := range posSlice {
+		posSlice := pos.Slice(cursor)
+		for i := range cursor.IDs {
 			sum += posSlice[i].X + posSlice[i].Y
 		}
 	}

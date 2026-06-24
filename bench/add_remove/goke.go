@@ -12,6 +12,8 @@ func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
 	var pos goke.Comp[comps.Position]
+	var vel goke.Comp[comps.Velocity]
+
 	posBP := ecs.NewFactory(&pos)
 
 	var entities []uid.UID64
@@ -20,7 +22,6 @@ func runGOKe(b *testing.B, n int) {
 		entities = append(entities, posBP.IDs...)
 	}
 
-	var vel goke.Comp[comps.Velocity]
 	addVel := ecs.NewEditorBuilder(&vel).Build()
 	delVel := ecs.NewEditorBuilder().Delete(goke.Del[comps.Velocity]()).Build()
 

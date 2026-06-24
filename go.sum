@@ -9,8 +9,8 @@ github.com/go-ole/go-ole v1.2.6/go.mod h1:pprOEPIfldk/42T2oK7lQ4v4JSDwmV0As9GaiU
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
-github.com/kjkrol/goke/v2 v2.0.0 h1:JyOUiu7lwrY4OZi+o10a4GBPRy0FghZdFO+HH8XRMHw=
-github.com/kjkrol/goke/v2 v2.0.0/go.mod h1:2bBYhthhS1JUWVhZi8Tsp1DBj2JExJvGqAOnJBvxQQk=
+github.com/kjkrol/goke/v2 v2.0.1 h1:22m+rCzyR5zbjsoCJVclxgXrvqC0tsBGkTNxxHkPSC8=
+github.com/kjkrol/goke/v2 v2.0.1/go.mod h1:2bBYhthhS1JUWVhZi8Tsp1DBj2JExJvGqAOnJBvxQQk=
 github.com/kjkrol/uid v0.2.1 h1:OwEQLbG5x5grMaMFcXwY0LQbDfe14q58HxAqzut3NLQ=
 github.com/kjkrol/uid v0.2.1/go.mod h1:Oia1uzucXIKdTJv7GH6N1Zq4wl6T4NyETv6tNAb6kU0=
 github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 h1:6E+4a0GO5zZEnZ81pIr0yLvtUWk2if982qA3F3QD6H4=

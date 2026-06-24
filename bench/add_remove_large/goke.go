@@ -12,6 +12,7 @@ func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
 	var pos goke.Comp[comps.Position]
+	var vel goke.Comp[comps.Velocity]
 	var c1 goke.Comp[comps.C1]
 	var c2 goke.Comp[comps.C2]
 	var c3 goke.Comp[comps.C3]
@@ -21,7 +22,8 @@ func runGOKe(b *testing.B, n int) {
 	var c7 goke.Comp[comps.C7]
 	var c8 goke.Comp[comps.C8]
 	var c9 goke.Comp[comps.C9]
-	factory := ecs.NewFactory(&pos, &c1, &c2, &c3, &c4, &c5, &c6, &c7, &c8, &c9)
+	var c10 goke.Comp[comps.C10]
+	factory := ecs.NewFactory(&pos, &c1, &c2, &c3, &c4, &c5, &c6, &c7, &c8, &c9, &c10)
 
 	var entities []uid.UID64
 	factory.Create(n)
@@ -29,13 +31,6 @@ func runGOKe(b *testing.B, n int) {
 		entities = append(entities, factory.IDs...)
 	}
 
-	var c10 goke.Comp[comps.C10]
-	addC10 := ecs.NewEditorBuilder(&c10).Build()
-	for _, e := range entities {
-		addC10.Update(e)
-	}
-
-	var vel goke.Comp[comps.Velocity]
 	addVel := ecs.NewEditorBuilder(&vel).Build()
 	delVel := ecs.NewEditorBuilder().Delete(goke.Del[comps.Velocity]()).Build()
 

@@ -15,26 +15,27 @@ func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
 	var pos goke.Comp[comps.Position]
-	factory := ecs.NewFactory(&pos)
 
 	entities := make([]uid.UID64, 0, n)
+
+	factory := ecs.NewFactory(&pos)
 	factory.Create(n)
 	for factory.Next() {
 		entities = append(entities, factory.IDs...)
 	}
-	rand.Shuffle(n, util.Swap(entities))
 
-	var qpos goke.Comp[comps.Position]
-	query := ecs.NewQueryBuilder(&qpos).Build()
+	rand.Shuffle(n, util.Swap(entities))
 
 	sum := 0.0
 	// Don't use b.Loop and callback, as we do not want to measure
 	// the cost of calling the non-inlined callback.
 	b.ResetTimer()
+	query := ecs.NewQueryBuilder(&pos).Build()
+	cursor := &query.Cursor
 	for range b.N {
-		query.Pick(entities)
-		for query.Next() {
-			pos := qpos.At(&query.Cursor)
+		for _, e := range entities {
+			query.Seek(e)
+			pos := pos.At(cursor)
 			sum += pos.X
 		}
 	}

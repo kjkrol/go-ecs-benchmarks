@@ -13,34 +13,31 @@ func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
 	var pos goke.Comp[comps.Position]
-	posBP := ecs.NewFactory(&pos)
+	var vel goke.Comp[comps.Velocity]
 
-	var posVelPos goke.Comp[comps.Position]
-	var posVelVel goke.Comp[comps.Velocity]
-	posVelBP := ecs.NewFactory(&posVelPos, &posVelVel)
-
-	posBP.Create(n * 10)
-	for posBP.Next() {
+	factory1 := ecs.NewFactory(&pos)
+	factory1.Create(n * 10)
+	for factory1.Next() {
 	}
 
-	posVelBP.Create(n)
-	for posVelBP.Next() {
-		velSlice := posVelVel.Slice(&posVelBP.Cursor)
-		for i := range velSlice {
+	factory2 := ecs.NewFactory(&pos, &vel)
+	factory2.Create(n)
+	cursor := &factory2.Cursor
+	for factory2.Next() {
+		velSlice := pos.Slice(cursor)
+		for i := range cursor.IDs {
 			velSlice[i].X, velSlice[i].Y = 1, 1
 		}
 	}
 
-	var qpos goke.Comp[comps.Position]
-	var qvel goke.Comp[comps.Velocity]
-	query := ecs.NewQueryBuilder(&qpos, &qvel).Build()
-
+	query := ecs.NewQueryBuilder(&pos, &vel).Build()
+	cursor = &query.Cursor
 	loop := func() {
 		query.All()
 		for query.Next() {
-			posSlice := qpos.Slice(&query.Cursor)
-			velSlice := qvel.Slice(&query.Cursor)
-			for i := range posSlice {
+			posSlice := pos.Slice(cursor)
+			velSlice := vel.Slice(cursor)
+			for i := range cursor.IDs {
 				posSlice[i].X += velSlice[i].X
 				posSlice[i].Y += velSlice[i].Y
 			}
@@ -53,8 +50,8 @@ func runGOKe(b *testing.B, n int) {
 	sum := 0.0
 	query.All()
 	for query.Next() {
-		posSlice := qpos.Slice(&query.Cursor)
-		for i := range posSlice {
+		posSlice := pos.Slice(cursor)
+		for i := range cursor.IDs {
 			sum += posSlice[i].X + posSlice[i].Y
 		}
 	}
