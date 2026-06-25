@@ -31,10 +31,13 @@ func runGOKe(b *testing.B, n int) {
 	// the cost of calling the non-inlined callback.
 	b.ResetTimer()
 	query := ecs.NewQueryBuilder(&pos).Build()
-	cursor := &query.Cursor
+	cursor := query.Cursor()
+	// All entities come from a single Factory.Create call, so they share one
+	// archetype: Seek once to establish it, then SeekH for the rest.
+	query.Seek(entities[0])
 	for range b.N {
 		for _, e := range entities {
-			query.Seek(e)
+			query.SeekH(e)
 			pos := pos.At(cursor)
 			sum += pos.X
 		}

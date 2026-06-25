@@ -49,7 +49,7 @@ func runGOKe(b *testing.B, n int) {
 	}
 
 	query := ecs.NewQueryBuilder(&pos, &vel).Build()
-	cursor := &query.Cursor
+	cursor := query.Cursor()
 	loop := func() {
 		query.All()
 		for query.Next() {
