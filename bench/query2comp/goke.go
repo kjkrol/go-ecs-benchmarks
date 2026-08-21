@@ -5,34 +5,46 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/kjkrol/goke"
+	"github.com/kjkrol/goke/v3"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
 func runGOKe(b *testing.B, n int) {
 	ecs := goke.New()
 
-	goke.RegisterComponent[comps.Position](ecs)
-	goke.RegisterComponent[comps.Velocity](ecs)
+	var pos goke.Comp[comps.Position]
+	var vel goke.Comp[comps.Velocity]
+	var factory1, factory2 *goke.Factory
+	var query *goke.Query
+	ecs.Setup(goke.SystemFn{OnInit: func(si *goke.SysInit) {
+		factory1 = si.NewFactory(&pos)
+		factory2 = si.NewFactory(&pos, &vel)
+		query = si.NewQueryBuilder(&pos, &vel).Build()
+	}})
 
-	posBP := goke.NewBlueprint1[comps.Position](ecs)
-	posVelBP := goke.NewBlueprint2[comps.Position, comps.Velocity](ecs)
-
-	for range n * 10 {
-		_, _ = posBP.Create()
+	factory1.Create(n * 10)
+	for factory1.Next() {
 	}
-	for range n {
-		_, _, v := posVelBP.Create()
-		v.X, v.Y = 1, 1
+
+	factory2.Create(n)
+	cursor := &factory2.Cursor
+	for factory2.Next() {
+		velSlice := vel.Slice(cursor)
+		for i := range cursor.IDs {
+			velSlice[i].X, velSlice[i].Y = 1, 1
+		}
 	}
 
-	view := goke.NewView2[comps.Position, comps.Velocity](ecs)
-
+	cursor = query.Cursor()
 	loop := func() {
-		for head := range view.Values() {
-			pos, vel := head.V1, head.V2
-			pos.X += vel.X
-			pos.Y += vel.Y
+		query.All()
+		for query.Next() {
+			posSlice := pos.Slice(cursor)
+			velSlice := vel.Slice(cursor)
+			for i := range cursor.IDs {
+				posSlice[i].X += velSlice[i].X
+				posSlice[i].Y += velSlice[i].Y
+			}
 		}
 	}
 	for b.Loop() {
@@ -40,9 +52,12 @@ func runGOKe(b *testing.B, n int) {
 	}
 
 	sum := 0.0
-	for head := range view.Values() {
-		pos, _ := head.V1, head.V2
-		sum += pos.X + pos.Y
+	query.All()
+	for query.Next() {
+		posSlice := pos.Slice(cursor)
+		for i := range cursor.IDs {
+			sum += posSlice[i].X + posSlice[i].Y
+		}
 	}
 	if sum != float64(n*b.N*2) {
 		panic(fmt.Sprintf("Expected sum %d, got %.2f", n*b.N*2, sum))
