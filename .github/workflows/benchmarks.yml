@@ -8,11 +8,13 @@ on:
     - 'bench/**'
     - 'go.mod'
     - 'go.sum'
+    - 'docs/README-template.md'
   pull_request:
     paths:
     - 'bench/**'
     - 'go.mod'
     - 'go.sum'
+    - 'docs/README-template.md'
   workflow_dispatch: {}
 
 jobs:
