@@ -11,7 +11,7 @@ Comparative benchmarks for Go Entity Component System (ECS) implementations.
 | [Ark](https://github.com/mlange-42/ark) | v0.8.3 | ![GitHub Tag](https://img.shields.io/github/v/tag/mlange-42/ark?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/mlange-42/ark?label=date) | ![Last commit](https://img.shields.io/github/last-commit/mlange-42/ark) |
 | [Donburi](https://github.com/yohamta0/donburi-ecs) | v1.15.7 | ![GitHub Tag](https://img.shields.io/github/v/tag/yohamta0/donburi-ecs?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/yohamta0/donburi-ecs?label=date) | ![Last commit](https://img.shields.io/github/last-commit/yohamta0/donburi-ecs) |
 | [go‑gameengine‑ecs](https://github.com/marioolofo/go-gameengine-ecs) | v0.9.0 | ![GitHub Tag](https://img.shields.io/github/v/tag/marioolofo/go-gameengine-ecs?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/marioolofo/go-gameengine-ecs?label=date) | ![Last commit](https://img.shields.io/github/last-commit/marioolofo/go-gameengine-ecs) |
-| [GOKe](https://github.com/kjkrol/goke) | v1.2.6 | ![GitHub Tag](https://img.shields.io/github/v/tag/kjkrol/goke?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/kjkrol/goke?label=date) | ![Last commit](https://img.shields.io/github/last-commit/kjkrol/goke) |
+| [GOKe](https://github.com/kjkrol/goke) | v3.1.0 | ![GitHub Tag](https://img.shields.io/github/v/tag/kjkrol/goke?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/kjkrol/goke?label=date) | ![Last commit](https://img.shields.io/github/last-commit/kjkrol/goke) |
 | [unitoftime/ecs](https://github.com/unitoftime/ecs) | v0.0.3 | ![GitHub Tag](https://img.shields.io/github/v/tag/unitoftime/ecs?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/unitoftime/ecs?label=date) | ![Last commit](https://img.shields.io/github/last-commit/unitoftime/ecs) |
 | [Volt](https://github.com/akmonengine/volt) | v1.7.0 | ![GitHub Tag](https://img.shields.io/github/v/tag/akmonengine/volt?color=blue) ![GitHub Release Date](https://img.shields.io/github/release-date/akmonengine/volt?label=date) | ![Last commit](https://img.shields.io/github/last-commit/akmonengine/volt) |
 
@@ -32,7 +32,7 @@ Open an issue if you want a version update.
 | [Ark](https://github.com/mlange-42/ark) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [Donburi](https://github.com/yohamta0/donburi-ecs) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | [go‑gameengine‑ecs](https://github.com/marioolofo/go-gameengine-ecs) | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [GOKe](https://github.com/kjkrol/goke) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| [GOKe](https://github.com/kjkrol/goke) | ✅ | ✅  | ❌ | ❌ | ✅ | ✅ |
 | [unitoftime/ecs](https://github.com/unitoftime/ecs) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | [Volt](https://github.com/akmonengine/volt) | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
@@ -63,7 +63,7 @@ The initial capacity of the world is set to 1024 where this is supported.
 
 ${query2comp}
 
-> **Note:** Donburi, GOKe, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
+> **Note:** Donburi, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
 As a result, iteration speed may degrade if the callback contains complex logic
 and the Go compiler is unable to inline it.
 
@@ -81,7 +81,7 @@ Each of these `N` entities has some combination of components
 
 ${query32arch}
 
-> **Note:** Donburi, GOKe, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
+> **Note:** Donburi, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
 As a result, iteration speed may degrade if the callback contains complex logic
 and the Go compiler is unable to inline it.
 
@@ -99,7 +99,7 @@ Another `4 * N` entities with `Position` and some combination of 8 components
 
 ${query256arch}
 
-> **Note:** Donburi, GOKe, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
+> **Note:** Donburi, unitoftime/ecs, and Volt use a callback-based approach for their query loops.
 As a result, iteration speed may degrade if the callback contains complex logic
 and the Go compiler is unable to inline it.
 
