@@ -3,7 +3,7 @@ package newworld
 import (
 	"testing"
 
-	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/goke/v3"
 	"github.com/stretchr/testify/assert"
 )
 

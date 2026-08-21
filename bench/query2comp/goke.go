@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/kjkrol/goke/v2"
+	"github.com/kjkrol/goke/v3"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
@@ -14,13 +14,18 @@ func runGOKe(b *testing.B, n int) {
 
 	var pos goke.Comp[comps.Position]
 	var vel goke.Comp[comps.Velocity]
+	var factory1, factory2 *goke.Factory
+	var query *goke.Query
+	ecs.Setup(goke.SystemFn{OnInit: func(si *goke.SysInit) {
+		factory1 = si.NewFactory(&pos)
+		factory2 = si.NewFactory(&pos, &vel)
+		query = si.NewQueryBuilder(&pos, &vel).Build()
+	}})
 
-	factory1 := ecs.NewFactory(&pos)
 	factory1.Create(n * 10)
 	for factory1.Next() {
 	}
 
-	factory2 := ecs.NewFactory(&pos, &vel)
 	factory2.Create(n)
 	cursor := &factory2.Cursor
 	for factory2.Next() {
@@ -30,7 +35,6 @@ func runGOKe(b *testing.B, n int) {
 		}
 	}
 
-	query := ecs.NewQueryBuilder(&pos, &vel).Build()
 	cursor = query.Cursor()
 	loop := func() {
 		query.All()

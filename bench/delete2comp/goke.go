@@ -2,9 +2,9 @@ package delete2comp
 
 import (
 	"testing"
+	"time"
 
-	"github.com/kjkrol/goke/v2"
-	"github.com/kjkrol/uid"
+	"github.com/kjkrol/goke/v3"
 	"github.com/mlange-42/go-ecs-benchmarks/bench/comps"
 )
 
@@ -13,25 +13,40 @@ func runGOKe(b *testing.B, n int) {
 
 	var pos goke.Comp[comps.Position]
 	var vel goke.Comp[comps.Velocity]
-	factory := ecs.NewFactory(&pos, &vel)
+	var factory *goke.Factory
+	var query *goke.Query
+	var remover *goke.Remover
+	ecs.Setup(goke.SystemFn{OnInit: func(si *goke.SysInit) {
+		factory = si.NewFactory(&pos, &vel)
+		query = si.NewQueryBuilder(&pos, &vel).Build()
+		remover = si.Remover()
+	}})
 
-	entities := make([]uid.UID64, 0, n)
 	factory.Create(n)
 	for factory.Next() {
-		entities = append(entities, factory.IDs...)
 	}
 
-	for range b.N {
-		for _, e := range entities {
-			ecs.RemoveEnt(e)
+	removeSys := ecs.RegSys(goke.SystemFn{OnUpdate: func(cb *goke.CmdBuf, _ time.Duration) {
+		query.All()
+		for query.Next() {
+			buf := query.BeginMigrate(cb)
+			for _, id := range query.Cursor().IDs {
+				buf.Add(id)
+			}
+			buf.Commit(remover)
 		}
-		b.StopTimer()
+	}})
+	ecs.SetPlan(func(ctx goke.RunCtx, d time.Duration) {
+		ctx.Run(removeSys, d)
+		_ = ctx.Sync()
+	})
 
-		entities = entities[:0]
+	for b.Loop() {
+		ecs.Tick(0)
+		b.StopTimer()
 
 		factory.Create(n)
 		for factory.Next() {
-			entities = append(entities, factory.IDs...)
 		}
 		b.StartTimer()
 	}
