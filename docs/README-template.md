@@ -59,7 +59,7 @@ The initial capacity of the world is set to 1024 where this is supported.
 
 - Query all `[Position, Velocity]` entities, and add the velocity vector to the position vector.
 
-![query2comp](query2comp.svg)
+![query2comp](docs/results/query2comp.svg)
 
 ${query2comp}
 
@@ -77,7 +77,7 @@ Each of these `N` entities has some combination of components
 
 - Query all `[Position, Velocity]` entities, and add the velocity vector to the position vector.
 
-![query32arch](query32arch.svg)
+![query32arch](docs/results/query32arch.svg)
 
 ${query32arch}
 
@@ -95,7 +95,7 @@ Another `4 * N` entities with `Position` and some combination of 8 components
 
 - Query all `[Position, Velocity]` entities, and add the velocity vector to the position vector.
 
-![query256arch](query256arch.svg)
+![query256arch](docs/results/query256arch.svg)
 
 ${query256arch}
 
@@ -111,7 +111,7 @@ All entities are collected into a slice, and the slice is shuffled.
 * Iterate the shuffled entities.
 * For each entity, get its `Position` and sum up their `X` fields.
 
-![random](random.svg)
+![random](docs/results/random.svg)
 
 ${random}
 
@@ -123,7 +123,7 @@ The operation is performed once before benchmarking,
 to exclude memory allocation, archetype creation etc.
 See the benchmark below for entity creation with allocation.
 
-![create2comp](create2comp.svg)
+![create2comp](docs/results/create2comp.svg)
 
 ${create2comp}
 
@@ -138,7 +138,7 @@ As soon as things stabilize, the benchmarks for entity creation without allocati
 Low `N` values might be biased by things like archetype creation and memory allocation,
 which is handled differently by different implementations.
 
-![create2comp_alloc](create2comp_alloc.svg)
+![create2comp_alloc](docs/results/create2comp_alloc.svg)
 
 ${create2comp_alloc}
 
@@ -149,7 +149,7 @@ ${create2comp_alloc}
 The operation is performed once before benchmarking,
 to exclude things like archetype creation and memory allocation.
 
-![create10comp](create10comp.svg)
+![create10comp](docs/results/create10comp.svg)
 
 ${create10comp}
 
@@ -162,7 +162,7 @@ ${create10comp}
 
 One iteration is performed before the benchmarking starts, to exclude memory allocation.
 
-![add_remove](add_remove.svg)
+![add_remove](docs/results/add_remove.svg)
 
 ${add_remove}
 
@@ -175,7 +175,7 @@ ${add_remove}
 
 One iteration is performed before the benchmarking starts, to exclude memory allocation.
 
-![add_remove_large](add_remove_large.svg)
+![add_remove_large](docs/results/add_remove_large.svg)
 
 ${add_remove_large}
 
@@ -185,7 +185,7 @@ ${add_remove_large}
 
 * Delete all entities
 
-![delete2comp](delete2comp.svg)
+![delete2comp](docs/results/delete2comp.svg)
 
 ${delete2comp}
 
@@ -195,7 +195,7 @@ ${delete2comp}
 
 * Delete all entities
 
-![delete10comp](delete10comp.svg)
+![delete10comp](docs/results/delete10comp.svg)
 
 ${delete10comp}
 
@@ -261,3 +261,12 @@ However, there are a few (quality) criteria that need to be fulfilled for inclus
 
 Developers of included frameworks are encouraged to review the benchmarks,
 and to fix (or point to) misuse or potential optimizations.
+
+## Automated results PRs
+
+Pull requests from the `bench-results-update` branch are opened automatically by the `publish` job
+in `.github/workflows/benchmarks.yml`, after a benchmark run on `main` — they only refresh
+`README.md` and `docs/results/**` (the plotted numbers/images), never benchmark code, and don't need
+the code-review criteria above. That branch is force-pushed on every run, so there's at most one such
+PR open at a time, reused rather than duplicated. Everything else (`bench/**`, `go.mod`, workflow,
+docs) is normal work, reviewed as usual.
